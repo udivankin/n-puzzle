@@ -1,0 +1,141 @@
+/* PALLETE
+
+dark-primary-color:     #303F9F;
+default-primary-color:  #3F51B5;
+light-primary-color:    #C5CAE9;
+accent-color:           #00BCD4;
+primary-text-color:     #212121;
+secondary-text-color:   #727272;
+divider-color:          #B6B6B6
+
+*/
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(http://fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3VtXRa8TVwTICgirnJhmVJw.woff2) format('woff2');
+}
+
+html {
+    color: #fff;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #303F9F;
+    background:
+        linear-gradient(
+            #303F9F,
+            transparent
+        ),
+        linear-gradient(
+            -45deg,
+            #007E6E,
+            transparent
+        ),
+        linear-gradient(
+            45deg,
+            #3F007E,
+            transparent
+        );
+    background-blend-mode: multiply;
+}
+
+html, body {
+    height: 100%;   
+}
+
+#main {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+#main.resizing {
+    -webkit-filter: blur(20px);
+    -moz-filter: blur(20px);
+    -o-filter: blur(20px);
+    -ms-filter: blur(20px);
+    filter: blur(20px);
+    -webkit-transition: all .3s ease-out;
+    -moz-transition: all .3s ease-out;
+    -ms-transition: all .3s ease-out;
+    -o-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
+
+#puzzle-container {
+    height: 50%;
+    margin: 12.5% auto 0 auto;
+    position: relative;
+}
+
+#puzzle-container > .puzzle-tile {
+    width: 0;
+    height: 0;
+    background: #3F51B5;
+    display: block;
+    position: absolute;
+    text-align: center;
+    font-weight: 300;
+    cursor: pointer;
+    z-index: 2;
+    -webkit-transition: all .16s ease-out;
+    -moz-transition: all .16s ease-out;
+    -ms-transition: all .16s ease-out;
+    -o-transition: all .16s ease-out;
+    transition: all .16s ease-out;
+}
+
+#puzzle-container > .puzzle-tile.empty {
+    background: #3F51B5;
+    cursor: initial;
+    z-index: 1;
+}
+
+#puzzle-container > .puzzle-tile.moving {
+    transform: scale3d(1.05, 1.05, 1.05);
+    -webkit-box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.15), 0 4px 15px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.15), 0 4px 15px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.15), 0 4px 15px 0 rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    position: fixed;
+    height: 120px;
+    width: 100%;
+    bottom: 0;
+}
+
+#btn-shuffle {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    background: #00BCD4 url('../img/shuffle.svg') no-repeat center center;
+}
+
+.btn-floating {
+    outline: 0;
+    display: block;
+    color: #FFF;
+    border: 0;
+    overflow: hidden;
+    z-index: 1;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    padding: 0;
+    border-radius: 50%;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.btn-floating:hover {
+    -webkit-box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.2), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.2), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.2), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+}
