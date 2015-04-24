@@ -8,6 +8,12 @@
         var tilesCount = rows * cols - 1;
         var storageKey = 'puzzle_' + cols + '_' + rows;
 
+        var tiles = {
+            registry: [],
+            initialRegistry: [],
+            emptyPos: {}
+        };
+        
         function arrayShuffle(o){
             for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
             return o;
@@ -24,41 +30,36 @@
             });
             return a;
         }
-
-        var tiles = {
-            registry: [],
-            initialRegistry: [],
-            emptyPos: {},
-            randomMove: function() {
-                var targetTile = arrayShuffle(getSiblings(this.emptyPos))[0];
-                this.registry.forEach(function (tile) {
-                    if (tile.x === targetTile.x && tile.y === targetTile.y) {
-                        tile.move(true, function() {});
-                    }
-                });
-            }
-        };
+        
+        function randomMove() {
+            var targetTile = arrayShuffle(getSiblings(tiles.emptyPos))[0];
+            tiles.registry.forEach(function (tile) {
+                if (tile.x === targetTile.x && tile.y === targetTile.y) {
+                    tile.move(true);
+                }
+            });
+        }
 
         function Tile(tileData) {
             this.x = tileData.x; // координаты по х, 0 слева
             this.y = tileData.y; // координаты по y, 0 сверху
             this.number = tileData.hasOwnProperty('number') ? tileData.number : tileData.y * cols + tileData.x + 1; // номер на плитке
-            this.move = function (isShuffling, callback) {
-                getSiblings(this).forEach(function (where) { // проверка на empty и обмен координатами
-                    if (tiles.emptyPos.x === where.x && tiles.emptyPos.y === where.y) {
-                        tiles.emptyPos = {x: this.x, y: this.y};
-                        this.x = where.x;
-                        this.y = where.y;
-                    }
-                }, this);
-                if (!isShuffling) {
-                    saveLayout();
-                    callback();
-                }
-            };
         }
+        
+        Tile.prototype.move = function (isShuffling, callback) {
+            getSiblings(this).forEach(function (where) { // проверка на empty и обмен координатами
+                if (tiles.emptyPos.x === where.x && tiles.emptyPos.y === where.y) {
+                    tiles.emptyPos = {x: this.x, y: this.y};
+                    this.x = where.x;
+                    this.y = where.y;
+                }
+            }, this);
+            if (!isShuffling) {
+                saveLayout();
+                callback();
+            }
+        };
 
-        // TODO добавить шейк если тыкаешь неправильный тайл
         function DomTile(tile, animate) {
             var tileElement = document.createElement('div');
             // копию плитки в Dom элемент TODO
@@ -95,27 +96,15 @@
             tileElement.move  = function () {
                 tileElement.classList.add('moving');
                 tileElement.setTilePos(tile);
-                setTimeout(function() { tileElement.classList.remove('moving'); }, 130);
+                setTimeout(function() { 
+                    tileElement.classList.remove('moving'); 
+                }, 130);
             };
             // onClick handler 
             tileElement.onclick = function () {
                 tile.move(false, tileElement.move);
             };
             return tileElement;
-        }
-
-        // создаем DOM элементы на основе массива плиток
-        function render(animate) {
-            tiles.registry.forEach(function(tile) {
-                gameContainer.appendChild(new DomTile(tile, animate));
-            });
-        }
-
-        // TODO инициализируем игровую комбинацию
-        function shuffle() {
-            for (var i = 0; i < Math.pow(tilesCount, 2); i++) {
-                tiles.randomMove();
-            }
         }
 
         // создаем плитки победного расклада
@@ -131,7 +120,21 @@
                 }
             }
         }
+        
+        // TODO инициализируем игровую комбинацию
+        function shuffle() {
+            for (var i = 0; i < Math.pow(tilesCount, 2); i++) {
+                randomMove();
+            }
+        }
 
+        // создаем DOM элементы на основе массива плиток
+        function render(animate) {
+            tiles.registry.forEach(function(tile) {
+                gameContainer.appendChild(new DomTile(tile, animate));
+            });
+        }
+        
         // перегенерируем из сохраненной игры
         function loadLayout() {
             var data = JSON.parse(localStorage.getItem(storageKey));
@@ -198,8 +201,10 @@
             var MyPuzzle = new Puzzle(3, 3);
             document.getElementById('btn-shuffle').onclick = MyPuzzle.onReset;
             function resizeEnd(){
-                document.getElementById('main').classList.remove('resizing');
-                MyPuzzle.onResize();
+                if (!MyPuzzle.won) {
+                    document.getElementById('main').classList.remove('resizing');
+                    MyPuzzle.onResize();
+                }
             }
             // resize timer
             window.onresize = function(){
