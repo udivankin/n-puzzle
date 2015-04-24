@@ -95,7 +95,6 @@ html, body {
     height: 50%;
     margin: 12.5% auto 0 auto;
     position: relative;
-    overflow: hidden;
 }
 
 #puzzle-container > .puzzle-tile {
@@ -209,10 +208,6 @@ footer {
 
     #main {
        overflow: auto;
-    }
-
-    #puzzle-container {
-       overflow: visible;
     }
 
     footer {
