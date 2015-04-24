@@ -69,6 +69,7 @@ html, body {
 }
 
 #congrats {
+    display: none;
     position: absolute;
     overflow: hidden;
     top: 0;
