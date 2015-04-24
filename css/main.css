@@ -95,6 +95,7 @@ html, body {
     height: 50%;
     margin: 12.5% auto 0 auto;
     position: relative;
+    overflow: hidden;
 }
 
 #puzzle-container > .puzzle-tile {
@@ -187,8 +188,49 @@ footer {
 }
 
 @media (max-device-width : 1024px) {
-    /* turn off complex gradisent background for tablets */
+    /* turn off complex gradisent background for tablets and phones */
     html {
         background: #303F9F;
+    }
+}
+
+@media (max-device-width : 736px) {
+    /* fix layout for iPhone 6plus and below */
+    #btn-shuffle {
+        position: relative;
+        margin-top: 20px;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        display: inline-block;
+        right: initial;
+        bottom: initial;
+    }
+
+    #main {
+       overflow: auto;
+    }
+
+    #puzzle-container {
+       overflow: visible;
+    }
+
+    footer {
+        text-align: center;
+        background: rgba(255, 255, 255, .1);
+        z-index: 3;
+        height: 100px;
+    }
+
+    #size-controls {
+        bottom: 20px;
+    }
+
+    #size-controls > span {
+        margin-left: 6px;
+    }
+
+    #size-controls > span:nth-child(2) {
+        margin-right: 60px;
     }
 }

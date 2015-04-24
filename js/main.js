@@ -79,8 +79,8 @@ var puzzle = (function() {
                 tileElement.style.margin = marginSize / options.rows + '%';
                 tileElement.style.width = (100 - marginSize) / options.cols + '%';
                 tileElement.style.height = (100 - marginSize) / options.rows + '%';
-                tileElement.style.lineHeight = options.gameContainer.clientHeight * (1 - marginSize/100) / options.rows + 'px';
-                tileElement.style.fontSize = options.gameContainer.clientHeight * (1 - marginSize/100) / options.rows / 2 + 'px';
+                tileElement.style.lineHeight = options.gameContainer.offsetHeight * (1 - marginSize/100) / options.rows + 'px';
+                tileElement.style.fontSize = options.gameContainer.offsetHeight * (1 - marginSize/100) / options.rows / 2 + 'px';
                 if (animate) { // текст после завершения анимации
                     setTimeout(function () {
                         tileElement.textContent = tileElement.tile.number;
