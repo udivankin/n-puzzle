@@ -1,36 +1,36 @@
-(function() {
+var puzzle = (function() {
 
     'use strict';
 
-    function Puzzle(rows, cols) {
+    var puzzleModule = function(options) {
 
-        var gameContainer = document.getElementById('puzzle-container');
-        var tilesCount = rows * cols - 1;
-        var storageKey = 'puzzle_' + cols + '_' + rows;
+        var storageKey = 'puzzle_' + options.cols + '_' + options.rows;
+        var complete = false;
+        var marginSize = 8;
 
         var tiles = {
             registry: [],
             initialRegistry: [],
             emptyPos: {}
         };
-        
+
         function arrayShuffle(o){
             for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
             return o;
         };
-        
+
         function getSiblings(pos) { // TODO refactor
             var a = [];
             [ {x: pos.x - 1, y: pos.y}, {x: pos.x, y: pos.y - 1},
               {x: pos.x + 1, y: pos.y}, {x: pos.x, y: pos.y + 1}
             ].forEach(function (b) {
-                if (b.x >= 0 || b.x < cols || b.y >= 0 || b.y < rows) {
+                if (b.x >= 0 || b.x < options.cols || b.y >= 0 || b.y < options.rows) {
                     a.push(b);
                 }
             });
             return a;
         }
-        
+
         function randomMove() {
             var targetTile = arrayShuffle(getSiblings(tiles.emptyPos))[0];
             tiles.registry.forEach(function (tile) {
@@ -40,12 +40,19 @@
             });
         }
 
+        function checkComlete() {
+            complete = JSON.stringify(tiles.registry) === JSON.stringify(tiles.initialRegistry);
+            if (complete) {
+                options.completeCallback();
+            }
+        }
+
         function Tile(tileData) {
             this.x = tileData.x; // координаты по х, 0 слева
             this.y = tileData.y; // координаты по y, 0 сверху
-            this.number = tileData.hasOwnProperty('number') ? tileData.number : tileData.y * cols + tileData.x + 1; // номер на плитке
+            this.number = tileData.hasOwnProperty('number') ? tileData.number : tileData.y * options.cols + tileData.x + 1; // номер на плитке
         }
-        
+
         Tile.prototype.move = function (isShuffling, callback) {
             getSiblings(this).forEach(function (where) { // проверка на empty и обмен координатами
                 if (tiles.emptyPos.x === where.x && tiles.emptyPos.y === where.y) {
@@ -57,6 +64,7 @@
             if (!isShuffling) {
                 saveLayout();
                 callback();
+                checkComlete();
             }
         };
 
@@ -65,14 +73,14 @@
             // копию плитки в Dom элемент TODO
             tileElement.tile = tile;
             // устанавливаем класс заранее - необходимо для css анимации
-            tileElement.className = 'puzzle-tile'
+            tileElement.className = 'puzzle-tile';
             // так как поле паззла произвольного размера, стили задаем в рантайме
             tileElement.setTileStyles = function () {
-                tileElement.style.margin = 8 / rows + '%';
-                tileElement.style.width = 92 / cols + '%';
-                tileElement.style.height = 92 / rows + '%';
-                tileElement.style.lineHeight = gameContainer.clientHeight * 0.92 / rows + 'px';
-                tileElement.style.fontSize = gameContainer.clientHeight * 0.92 / rows / 2 + 'px';
+                tileElement.style.margin = marginSize / options.rows + '%';
+                tileElement.style.width = (100 - marginSize) / options.cols + '%';
+                tileElement.style.height = (100 - marginSize) / options.rows + '%';
+                tileElement.style.lineHeight = options.gameContainer.clientHeight * (1 - marginSize/100) / options.rows + 'px';
+                tileElement.style.fontSize = options.gameContainer.clientHeight * (1 - marginSize/100) / options.rows / 2 + 'px';
                 if (animate) { // текст после завершения анимации
                     setTimeout(function () {
                         tileElement.textContent = tileElement.tile.number;
@@ -83,8 +91,8 @@
             };
             // позицию необходимо будет менять, сообщая tile в качестве параметра
             tileElement.setTilePos = function (moveTo) {
-                tileElement.style.left = 100 * moveTo.x / cols + '%';
-                tileElement.style.top = 100 * moveTo.y / rows + '%';
+                tileElement.style.left = 100 * moveTo.x / options.cols + '%';
+                tileElement.style.top = 100 * moveTo.y / options.rows + '%';
             };
             tileElement.setTilePos(tile);
             if (animate) { // анимация при первичной прорисовке
@@ -96,11 +104,11 @@
             tileElement.move  = function () {
                 tileElement.classList.add('moving');
                 tileElement.setTilePos(tile);
-                setTimeout(function() { 
-                    tileElement.classList.remove('moving'); 
+                setTimeout(function() {
+                    tileElement.classList.remove('moving');
                 }, 130);
             };
-            // onClick handler 
+            // onClick handler
             tileElement.onclick = function () {
                 tile.move(false, tileElement.move);
             };
@@ -109,21 +117,22 @@
 
         // создаем плитки победного расклада
         function generateTiles() {
-            tiles.initialRegistry = [];
-            for (var x = 0; x < cols; x++) {
-                for (var y = 0; y < rows; y++) {
-                    if (x * y === (cols - 1) * (rows - 1)) { // skip last item
+            var a = [];
+            for (var x = 0; x < options.cols; x++) {
+                for (var y = 0; y < options.rows; y++) {
+                    if (x * y === (options.cols - 1) * (options.rows - 1)) { // skip last item
                         tiles.emptyPos = {x: x, y: y};
                         continue;
                     }
-                    tiles.initialRegistry.push(new Tile({x: x, y: y}));
+                    a.push(new Tile({x: x, y: y}));
                 }
             }
+            return a;
         }
-        
+
         // TODO инициализируем игровую комбинацию
         function shuffle() {
-            for (var i = 0; i < Math.pow(tilesCount, 2); i++) {
+            for (var i = 0; i < Math.pow(options.rows * options.cols, 2); i++) {
                 randomMove();
             }
         }
@@ -131,10 +140,10 @@
         // создаем DOM элементы на основе массива плиток
         function render(animate) {
             tiles.registry.forEach(function(tile) {
-                gameContainer.appendChild(new DomTile(tile, animate));
+                options.gameContainer.appendChild(new DomTile(tile, animate));
             });
         }
-        
+
         // перегенерируем из сохраненной игры
         function loadLayout() {
             var data = JSON.parse(localStorage.getItem(storageKey));
@@ -143,7 +152,7 @@
             });
             tiles.emptyPos = data.emptyPos;
         }
-        
+
         // сохраняем игру
         function saveLayout() {
             localStorage.setItem(storageKey, JSON.stringify({tiles: tiles.registry, emptyPos: tiles.emptyPos}));
@@ -151,33 +160,34 @@
 
         // подстраиваем высоту контейнера, чтобы плитки оставались квадратными
         function adjustWidth() {
-            gameContainer.style.width = gameContainer.clientHeight / rows * cols + 'px';
+            options.gameContainer.style.width = options.gameContainer.clientHeight / options.rows * options.cols + 'px';
             clearDom();
             render(false);
         }
-        
+
         // сбрасываем DOM контейнера
         function clearDom() {
-            while (gameContainer.firstChild) {
-                gameContainer.removeChild(gameContainer.firstChild);
+            while (options.gameContainer.firstChild) {
+                options.gameContainer.removeChild(options.gameContainer.firstChild);
             }
         }
 
         function reset() {
             localStorage.removeItem(storageKey); // сбрасываем localStorage
             clearDom();
+            complete = false;
+            tiles.initialRegistry = [] // сбрасываем собранный расклад
             tiles.registry = []; // сбрасываем текуший расклад
             init();
         }
 
         function init() {
-            document.title = tilesCount + ' puzzle'; // релевантный заголовок :)
-            generateTiles();
+            tiles.initialRegistry = generateTiles();
             adjustWidth();
             if (localStorage.getItem(storageKey)) { // проверяем сохраненную игру
                 loadLayout();
             } else {
-                tiles.registry = tiles.initialRegistry;
+                tiles.registry =  generateTiles();
                 shuffle();
             }
             render(true);
@@ -187,32 +197,92 @@
             adjustWidth();
         };
 
-        this.onReset = function () {
+        this.onReset = function() {
             reset();
         };
-        
-        init();
-    }
 
-    window.addEventListener(
-        'load',
-        function() {
+        this.isComplete = function() {
+            return complete;
+        };
+
+        init();
+    };
+
+    return puzzleModule;
+
+}());
+
+window.addEventListener(
+    'load',
+    function() {
+
+        var boardSize = localStorage.getItem('puzzle-size') ? JSON.parse(localStorage.getItem('puzzle-size')) : {rows: 4, cols: 4};
+
+        function hideComplete() {
+            document.getElementById('congrats').style.display = 'none';
+            document.getElementById('main').classList.remove('resizing');
+            document.getElementById('sfx-win').pause();
+            document.getElementById('sfx-win').load();
+        }
+
+        function onComplete() {
+            document.getElementById('main').classList.add('resizing');
+            document.getElementById('congrats').style.display = 'block';
+            document.getElementById('sfx-win').play();
+        }
+
+        function initPuzzle(boardSize) {
+
             var resizeTimer;
-            var MyPuzzle = new Puzzle(3, 3);
-            document.getElementById('btn-shuffle').onclick = MyPuzzle.onReset;
+
+            var MyPuzzle = new puzzle({
+                rows: boardSize.rows,
+                cols: boardSize.cols,
+                gameContainer: document.getElementById('puzzle-container'),
+                completeCallback: onComplete
+            });
+            document.title = (boardSize.rows * boardSize.cols - 1) + ' puzzle'; // релевантный заголовок :)
+
+            document.getElementById('btn-shuffle').onclick = function() {
+                hideComplete();
+                MyPuzzle.onReset();
+            };
+
             function resizeEnd(){
-                if (!MyPuzzle.won) {
+                if (!MyPuzzle.isComplete()) {
                     document.getElementById('main').classList.remove('resizing');
                     MyPuzzle.onResize();
                 }
             }
-            // resize timer
-            window.onresize = function(){
+
+            window.onresize = function(){ // resize timer
               document.getElementById('main').classList.add('resizing');
               clearTimeout(resizeTimer);
-              resizeTimer = setTimeout(resizeEnd, 1000);
+              resizeTimer = setTimeout(resizeEnd, 600);
+            };
+
+        }
+
+        initPuzzle(boardSize);
+
+        controls = document.getElementById('size-controls').getElementsByTagName('span');
+        for (var i = 0; i < controls.length; i++) {
+            controls[i].onclick = function() {
+                hideComplete();
+                if (this.dataset.dec) {
+                    if (boardSize[this.dataset.var] > 2) {
+                        boardSize[this.dataset.var]--;
+                        initPuzzle(boardSize);
+                    }
+                } else if (this.dataset.inc)  {
+                    if (boardSize[this.dataset.var] < 10) {
+                        boardSize[this.dataset.var]++;
+                        initPuzzle(boardSize);
+                    }
+                }
+                localStorage.setItem('puzzle-size', JSON.stringify(boardSize));
             };
         }
-    );
 
-}());
+    }
+);

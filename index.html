@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title></title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <link rel="shortcut icon" href="favicon.ico" >
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <link rel="stylesheet" href="css/normalize.css">
@@ -14,13 +14,22 @@
         <div id="main">
             <div id="puzzle-container"></div>
         </div>
-        
+
         <div id="congrats">
             <img src="img/star.svg">
             <div>You won!</div>
+            <audio id="sfx-win" src="sfx/win.ogg"></audio>
         </div>
 
         <footer>
+            <div id="size-controls">
+                Rows
+                <span data-var="rows" data-dec="1" title="Less rows">-</span>
+                <span data-var="rows" data-inc="1" title="More rows">+</span>
+                Columns
+                <span data-var="cols" data-dec="1"  title="Less columns">-</span>
+                <span data-var="cols" data-inc="1"  title="More columns">+</span>
+            </div>
             <button id="btn-shuffle" class="btn-floating" title="Shuffle"></button>
         </footer>
 
