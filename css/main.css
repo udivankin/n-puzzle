@@ -146,7 +146,7 @@ footer {
     display: inline-block;
     width: 24px;
     height: 24px;
-    line-height: 24px;
+    line-height: 22px;
     font-size: 24px;
     border: 1px solid #fff;
     border-radius: 50%;
@@ -162,7 +162,7 @@ footer {
 #btn-shuffle {
     position: absolute;
     right: 30px;
-    bottom: 30px;
+    top: -15px;
     background: #44b39b url('../img/shuffle.svg') no-repeat center center;
     z-index: 5;
 }
@@ -232,13 +232,14 @@ footer {
     /* fix layout for iPhone 6plus and below */
     #btn-shuffle {
         position: relative;
-        margin-top: 20px;
         width: 32px;
         height: 32px;
         line-height: 32px;
         display: inline-block;
         right: initial;
-        bottom: initial;
+        top: initial;
+        margin-left: 12px;
+        vertical-align: -7px;
     }
 
     #main {
@@ -248,11 +249,13 @@ footer {
     footer {
         text-align: center;
         background: rgba(255, 255, 255, .1);
-        height: 100px;
+        height: 80px;
     }
 
     #size-controls {
+        font-size: 14px;
         bottom: 20px;
+        line-height: 32px;
     }
 
     #size-controls > span {
@@ -260,6 +263,6 @@ footer {
     }
 
     #size-controls > span:nth-child(2) {
-        margin-right: 60px;
+        margin-right: 12px;
     }
 }
