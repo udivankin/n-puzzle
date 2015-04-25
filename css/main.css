@@ -187,9 +187,39 @@ footer {
 }
 
 @media (max-device-width : 1024px) {
-    /* turn off complex gradisent background for tablets and phones */
+    /* turn off complex gradient background for tablets and phones */
     html {
         background: #303F9F;
+    }
+    /* turn off puzzle tile and resizing animation */
+    #puzzle-container > .puzzle-tile {
+        -webkit-transition: none;
+        -moz-transition: none;
+        -ms-transition: none;
+        -o-transition: none;
+        transition: none;
+    }
+
+    #puzzle-container > .puzzle-tile.moving {
+        -webkit-transition: none;
+        -moz-transition: none;
+        -ms-transition: none;
+        -o-transition: none;
+        transition: none;
+        transform: none;
+    }
+    
+    #main.resizing {
+        -webkit-filter: none;
+        -moz-filter: none;
+        -o-filter: none;
+        -ms-filter: none;
+        filter: none;
+        -webkit-transition: none;
+        -moz-transition: none;
+        -ms-transition: none;
+        -o-transition: none;
+        transition: none;
     }
 }
 
