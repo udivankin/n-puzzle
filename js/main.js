@@ -43,6 +43,7 @@ var puzzle = (function() {
         function checkComlete() {
             complete = JSON.stringify(tiles.registry) === JSON.stringify(tiles.initialRegistry);
             if (complete) {
+                clearLayout(); // когда reset() это много, а сбросить надо
                 options.completeCallback();
             }
         }
@@ -163,6 +164,13 @@ var puzzle = (function() {
                 return false;
             }
         }
+        
+        // сбрасываем сохраненную игру
+        function clearLayout() {
+            if (typeof localStorage === 'object') {
+                localStorage.removeItem(storageKey);
+            }
+        }
 
         // подстраиваем высоту контейнера, чтобы плитки оставались квадратными
         function adjustContainer() {
@@ -198,7 +206,7 @@ var puzzle = (function() {
         }
 
         function reset() {
-            localStorage.removeItem(storageKey); // сбрасываем localStorage
+            clearLayout();
             clearDom();
             complete = false;
             tiles.initialRegistry = [] // сбрасываем собранный расклад
