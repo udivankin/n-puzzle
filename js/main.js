@@ -19,7 +19,7 @@ var puzzle = (function() {
             return o;
         };
 
-        function getSiblings(pos) { // TODO refactor
+        function getSiblings(pos) {
             var a = [];
             [ {x: pos.x - 1, y: pos.y}, {x: pos.x, y: pos.y - 1},
               {x: pos.x + 1, y: pos.y}, {x: pos.x, y: pos.y + 1}
@@ -70,7 +70,6 @@ var puzzle = (function() {
 
         function DomTile(tile, animate) {
             var tileElement = document.createElement('div');
-            // копию плитки в Dom элемент TODO
             tileElement.tile = tile;
             // устанавливаем класс заранее - необходимо для css анимации
             tileElement.className = 'puzzle-tile';
@@ -110,9 +109,8 @@ var puzzle = (function() {
             };          
             // onClick handler
             tileElement.addEventListener(
-                'ontouchstart' in document.documentElement ? 'touchstart': 'click', 
+                'ontouchstart' in document.documentElement ? 'touchstart': 'mousedown', 
                 function () {
-                    console.log(this);
                     tile.move(false, tileElement.move);
                 }
             );
@@ -134,7 +132,7 @@ var puzzle = (function() {
             return a;
         }
 
-        // TODO инициализируем игровую комбинацию
+        // инициализируем расклад
         function shuffle() {
             for (var i = 0; i < Math.pow(options.rows * options.cols, 2); i++) {
                 randomMove();
@@ -159,7 +157,11 @@ var puzzle = (function() {
 
         // сохраняем игру
         function saveLayout() {
-            localStorage.setItem(storageKey, JSON.stringify({tiles: tiles.registry, emptyPos: tiles.emptyPos}));
+            try { // отлавливаем эксепшн если localStorage не доступен или переполнен
+                localStorage.setItem(storageKey, JSON.stringify({tiles: tiles.registry, emptyPos: tiles.emptyPos}));
+            } catch(error) {
+                return false;
+            }
         }
 
         // подстраиваем высоту контейнера, чтобы плитки оставались квадратными
@@ -207,7 +209,7 @@ var puzzle = (function() {
         function init() {
             tiles.initialRegistry = generateTiles();
             adjustContainer();
-            if (localStorage.getItem(storageKey)) { // проверяем сохраненную игру
+            if (typeof localStorage === 'object' && localStorage.getItem(storageKey)) { // проверяем сохраненную игру
                 loadLayout();
             } else {
                 tiles.registry =  generateTiles();
@@ -238,8 +240,12 @@ var puzzle = (function() {
 window.addEventListener(
     'load',
     function() {
+        
+        var boardSize = {rows: 4, cols: 4};
 
-        var boardSize = localStorage.getItem('puzzle-size') ? JSON.parse(localStorage.getItem('puzzle-size')) : {rows: 4, cols: 4};
+        if (typeof localStorage === 'object' && localStorage.getItem('puzzle-size')) {
+            boardSize = JSON.parse(localStorage.getItem('puzzle-size'));
+        }
 
         function hideComplete() {
             document.getElementById('congrats').style.display = 'none';
@@ -303,7 +309,9 @@ window.addEventListener(
                         initPuzzle(boardSize);
                     }
                 }
-                localStorage.setItem('puzzle-size', JSON.stringify(boardSize));
+                try {
+                    localStorage.setItem('puzzle-size', JSON.stringify(boardSize));
+                } catch(error) {}
             };
         }
 
