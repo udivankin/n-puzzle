@@ -107,11 +107,15 @@ var puzzle = (function() {
                 setTimeout(function() {
                     tileElement.classList.remove('moving');
                 }, 130);
-            };
+            };          
             // onClick handler
-            tileElement.onclick = function () {
-                tile.move(false, tileElement.move);
-            };
+            tileElement.addEventListener(
+                'ontouchstart' in document.documentElement ? 'touchstart': 'click', 
+                function () {
+                    console.log(this);
+                    tile.move(false, tileElement.move);
+                }
+            );
             return tileElement;
         }
 
