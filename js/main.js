@@ -159,8 +159,27 @@ var puzzle = (function() {
         }
 
         // подстраиваем высоту контейнера, чтобы плитки оставались квадратными
-        function adjustWidth() {
-            options.gameContainer.style.width = options.gameContainer.clientHeight / options.rows * options.cols + 'px';
+        function adjustContainer() {
+            var w, h;
+            var largerSize = 100 - marginSize * 4;
+            var screenFactor = window.innerWidth / window.innerHeight;
+            var puzzleFactor = options.cols / options.rows;
+            var footerHeight = document.getElementsByTagName('footer')[0].offsetHeight / window.innerHeight * 100;
+            
+            // нам нужна доска которая не выше (или не шире) чем эквивалент n% меньшей стороны
+            if (screenFactor > puzzleFactor) { 
+                h = largerSize;
+                w = h * puzzleFactor / screenFactor;
+            } else {
+                w = largerSize; // 60 and 1.25
+                h = w / puzzleFactor * screenFactor;
+            }
+            
+            options.gameContainer.style.width = w + '%';
+            options.gameContainer.style.height = h + '%';
+            options.gameContainer.style.marginLeft = '-' + w / 2 + '%';
+            options.gameContainer.style.top = (100 - footerHeight - h) / 2 + '%';
+                
             clearDom();
             render(false);
         }
@@ -183,7 +202,7 @@ var puzzle = (function() {
 
         function init() {
             tiles.initialRegistry = generateTiles();
-            adjustWidth();
+            adjustContainer();
             if (localStorage.getItem(storageKey)) { // проверяем сохраненную игру
                 loadLayout();
             } else {
@@ -194,7 +213,7 @@ var puzzle = (function() {
         }
 
         this.onResize = function() {
-            adjustWidth();
+            adjustContainer();
         };
 
         this.onReset = function() {

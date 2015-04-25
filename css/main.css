@@ -52,7 +52,6 @@ html, body {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    min-height: 500px;
 }
 
 #main.resizing {
@@ -92,9 +91,8 @@ html, body {
 }
 
 #puzzle-container {
-    height: 50%;
-    margin: 12.5% auto 0 auto;
-    position: relative;
+    position: absolute;
+    left: 50%;
 }
 
 #puzzle-container > .puzzle-tile {
@@ -128,9 +126,10 @@ html, body {
 
 footer {
     position: fixed;
-    height: 120px;
+    height: 90px;
     width: 100%;
     bottom: 0;
+    z-index: 3;
 }
 
 #size-controls {
@@ -213,7 +212,6 @@ footer {
     footer {
         text-align: center;
         background: rgba(255, 255, 255, .1);
-        z-index: 3;
         height: 100px;
     }
 
