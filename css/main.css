@@ -224,6 +224,7 @@ footer {
         -ms-transition: none;
         -o-transition: none;
         transition: none;
+        visibility: hidden;
     }
 }
 
