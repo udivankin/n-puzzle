@@ -201,11 +201,9 @@ footer {
     }
 
     #puzzle-container > .puzzle-tile.moving {
-        -webkit-transition: none;
-        -moz-transition: none;
-        -ms-transition: none;
-        -o-transition: none;
-        transition: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
         transform: none;
     }
     
