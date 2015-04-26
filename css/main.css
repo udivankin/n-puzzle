@@ -9,20 +9,23 @@ divider-color:          #B6B6B6
 */
 
 @font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 100;
-  src: local('Roboto Thin'), local('Roboto-Thin'), url(http://fonts.gstatic.com/s/roboto/v15/2tsd397wLxj96qwHyNIkxPesZW2xOQ-xsNqO47m55DA.woff2) format('woff2');
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 100;
+    src: local('Roboto Thin'), local('Roboto-Thin'), url(http://fonts.gstatic.com/s/roboto/v15/2tsd397wLxj96qwHyNIkxPesZW2xOQ-xsNqO47m55DA.woff2) format('woff2');
 }
 
-html {
-    color: #e8e8e8;
+* {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+html {
+    color: #e8e8e8;
     font-family: 'Roboto', sans-serif;
     font-weight: 100;
     background-color: #303F9F;
@@ -243,7 +246,7 @@ footer {
     }
 
     #main {
-       overflow: auto;
+        overflow: auto;
     }
 
     footer {
